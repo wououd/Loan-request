@@ -3,7 +3,8 @@ import "./formStyle.css"
 import Modal from './Modal'
 import { useState } from 'react'
 const LoanForm = () => {
-const [btnIsDisabled, setBtnIsDisabled]= useState(true);
+  const [errorMessage, setErrorMessage]= useState(null);
+  const [showModal, setShowModal] = useState(false);
 const [LoanInputs, setLoanInputs]= useState({
   name:"",
   phoneNumber: "",
@@ -12,13 +13,32 @@ const [LoanInputs, setLoanInputs]= useState({
   salaryRange: ""
 })
 
-function handleSubmit(e){
-  e.preventDefault();
-  alert("hello")
+
+function handleDivClick(){
+  if(showModal){
+    setShowModal(false)
+  }
 }
+  function handleSubmit(event) {
+    event.preventDefault();
+    setErrorMessage(null);
+    const {age,phoneNumber} = LoanInputs;
+    if(age <18 || age> 100 ){
+      setErrorMessage("the age is not allowed");
+    }else if(phoneNumber.length  <8 || phoneNumber.length > 12) {
+      setErrorMessage("the phone number is incorrect");
+
+    }
+    setShowModal(true);
+  }
+
+  const btnIsDisabled =
+    LoanInputs.name === "" ||
+    LoanInputs.age === "" ||
+    LoanInputs.phoneNumber === "";
 
   return (
-  <div style={{flexDirection:"column"}}  className="flex" >
+  <div onClick={handleDivClick} style={{flexDirection:"column"}}  className="flex" >
 <form action="" id="loan-form" className="flex" style={{flexDirection:"column"}} >
 <h1>Loan Request</h1>
 <hr />
@@ -36,10 +56,10 @@ function handleSubmit(e){
 <option value="">Between 500 & 2000 $</option>
 <option value="">Above 2000$</option>
 </select>
-<button id="btn-submit" className={btnIsDisabled ?"disable" : ""} disabled={LoanInputs.name=="" || LoanInputs.phoneNumber=="" || LoanInputs.age==""} onClick={handleSubmit}> Submit</button>
+<button id="btn-submit" className={btnIsDisabled ?"disable" : ""} disabled={btnIsDisabled} onClick={handleSubmit}> Submit</button>
 
 </form>
-{/* <Modal id="modal"/> */}
+<Modal isVisible = {showModal}  errorMessage ={errorMessage}/>
     </div>
   )
 }
